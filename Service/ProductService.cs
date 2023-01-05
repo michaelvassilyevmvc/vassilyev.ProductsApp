@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Service;
 
@@ -20,13 +21,13 @@ internal sealed class ProductService : IProductService
 		_mapper = mapper;
 	}
 
-	public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(bool trackChanges)
+	public async Task<(IEnumerable<ProductDto> products, MetaData metaData)> GetAllProductsAsync(ProductParameters productParameters, bool trackChanges)
 	{
-		var products = await _repository.Product.GetAllProductsAsync(trackChanges);
+		var productsWithMetaData = await _repository.Product.GetAllProductsAsync(productParameters, trackChanges);
 
-		var productsDto = _mapper.Map<IEnumerable<ProductDto>>(products);
+		var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetaData);
 
-		return productsDto;
+		return (products: productsDto, metaData: productsWithMetaData.MetaData);
 	}
 
 	public async Task<ProductDto> GetProductAsync(Guid id, bool trackChanges)

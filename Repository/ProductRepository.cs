@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.RequestFeatures;
 
 namespace Repository;
 
@@ -11,10 +12,16 @@ internal sealed class ProductRepository : RepositoryBase<Product>, IProductRepos
 	{
 	}
 
-	public async Task<IEnumerable<Product>> GetAllProductsAsync(bool trackChanges) =>
-		await FindAll(trackChanges)
-		.OrderBy(c => c.Name)
-		.ToListAsync();
+	public async Task<PagedList<Product>> GetAllProductsAsync(ProductParameters productParameters,bool trackChanges)
+	{
+        var products = await FindAll(trackChanges)
+        .OrderBy(c => c.Name)
+        .ToListAsync();
+
+		return PagedList<Product>
+			.ToPagedList(source: products, pageNumber: productParameters.PageNumber, pageSize: productParameters.PageSize);
+    }
+		
 
 	public async Task<Product> GetProductAsync(Guid productId, bool trackChanges) =>
 		await FindByCondition(c => c.Id.Equals(productId), trackChanges)
