@@ -23,6 +23,11 @@ internal sealed class ProductService : IProductService
 
 	public async Task<(IEnumerable<ProductDto> products, MetaData metaData)> GetAllProductsAsync(ProductParameters productParameters, bool trackChanges)
 	{
+		if (!productParameters.ValidPriceRange)
+		{
+			throw new MaxPriceRangeBadRequestException();
+		}
+
 		var productsWithMetaData = await _repository.Product.GetAllProductsAsync(productParameters, trackChanges);
 
 		var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetaData);

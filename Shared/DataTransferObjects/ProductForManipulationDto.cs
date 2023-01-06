@@ -15,4 +15,5 @@ public abstract record ProductForManipulationDto
     public DateTime? ExpiresDate { get; set; }
 
     public string? CompanyName { get; set; }
+    public decimal? Price { get; set; }
 }

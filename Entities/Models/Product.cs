@@ -15,6 +15,7 @@ public class Product
 	[Required(ErrorMessage = "Дата производства обязательное поле.")]
 	public DateTime ProductionDate { get; set; }
 	public DateTime? ExpiresDate { get; set; }
+	public decimal Price { get; set; }
 
 	public string? CompanyName { get; set; }
 

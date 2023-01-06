@@ -7,5 +7,6 @@ public record ProductDto
 	public string? ProductCompanyName { get; set; }
 	public DateTime ProductionDate { get; set; }
 	public int? ExpireDayCount { get; set; }
+	public decimal? Price { get; set; }
 
 }
