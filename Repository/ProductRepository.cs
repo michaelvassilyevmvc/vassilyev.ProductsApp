@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using Shared.RequestFeatures;
 
 namespace Repository;
@@ -15,8 +16,9 @@ internal sealed class ProductRepository : RepositoryBase<Product>, IProductRepos
 	public async Task<PagedList<Product>> GetAllProductsAsync(ProductParameters productParameters,bool trackChanges)
 	{
         var products =
-			await FindByCondition(x => (x.Price >= productParameters.MinPrice && x.Price <= productParameters.MaxPrice)
-		, trackChanges)
+			await FindAll(trackChanges)
+		.FilterProducts(productParameters.MinPrice, productParameters.MaxPrice)
+		.Search(productParameters.SearchTerm)
 		.OrderBy(c => c.Name)
         .ToListAsync();
 

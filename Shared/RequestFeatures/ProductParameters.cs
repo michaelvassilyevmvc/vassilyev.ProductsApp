@@ -6,5 +6,7 @@
         public decimal MaxPrice { get; set; } = (decimal)int.MaxValue;
 
         public bool ValidPriceRange => MaxPrice > MinPrice;
+
+        public string SearchTerm { get; set; } = String.Empty;
     }
 }
