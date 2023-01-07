@@ -19,7 +19,7 @@ internal sealed class ProductRepository : RepositoryBase<Product>, IProductRepos
 			await FindAll(trackChanges)
 		.FilterProducts(productParameters.MinPrice, productParameters.MaxPrice)
 		.Search(productParameters.SearchTerm)
-		.OrderBy(c => c.Name)
+		.Sort(productParameters.OrderBy)
         .ToListAsync();
 
 		return PagedList<Product>
