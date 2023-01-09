@@ -25,7 +25,7 @@ public class ProductsController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetProducts")]
     [HttpHead]
     [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
@@ -54,7 +54,7 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateProduct")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateProduct([FromBody] ProductForCreationDto product)
     {
