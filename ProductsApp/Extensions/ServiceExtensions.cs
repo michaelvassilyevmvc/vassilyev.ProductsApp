@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Repository;
 using Service;
 using Service.Contracts;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using ProductsApp.Presentation.Controllers;
+using Marvin.Cache.Headers;
 
 namespace ProductsApp.Extensions;
 
@@ -70,4 +73,32 @@ public static class ServiceExtensions
             }
         });
     }
+
+    public static void ConfigureVersioning(this IServiceCollection services)
+    {
+        services.AddApiVersioning(opt =>
+        {
+            opt.ReportApiVersions = true;
+            opt.AssumeDefaultVersionWhenUnspecified = true;
+            opt.DefaultApiVersion = new ApiVersion(1, 0);
+            opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            opt.Conventions.Controller<ProductsController>()
+                .HasApiVersion(new ApiVersion(1, 0));
+            opt.Conventions.Controller<ProductsV2Controller>()
+                .HasDeprecatedApiVersion(new ApiVersion(2, 0));
+        });
+    }
+
+    public static void ConfigureResponseCaching(this IServiceCollection services) => services.AddResponseCaching();
+
+    public static void ConfigureHttpCacheHeaders(this IServiceCollection services) =>
+        services.AddHttpCacheHeaders((expirationOpt) =>
+        {
+            expirationOpt.MaxAge = 65;
+            expirationOpt.CacheLocation = CacheLocation.Private;
+        },
+        (validationOpt) =>
+        {
+            validationOpt.MustRevalidate = true;
+        });
 }

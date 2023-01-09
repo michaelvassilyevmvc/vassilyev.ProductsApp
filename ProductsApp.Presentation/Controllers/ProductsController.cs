@@ -1,4 +1,5 @@
 ﻿using Entities.LinkModels;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ProductsApp.Presentation.ActionFilters;
@@ -12,6 +13,7 @@ namespace ProductsApp.Presentation.Controllers;
 
 [Route("api/products")]
 [ApiController]
+//[ResponseCache(CacheProfileName = "120SecondsDuration")]
 public class ProductsController : ControllerBase
 {
     private readonly IServiceManager _service;
@@ -40,6 +42,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id:guid}", Name = "ProductById")]
+    [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
+    [HttpCacheValidation(MustRevalidate = false)]
     public async Task<IActionResult> GetProduct(Guid id)
     {
         var product = await _service.ProductService.GetProductAsync(id, trackChanges: false);
