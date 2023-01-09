@@ -9,6 +9,7 @@ using NLog;
 using Shared.DataTransferObjects;
 using Service.DataShaping;
 using ProductsApp.Utility;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +21,7 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
-builder.Services.ConfigureResponseCaching();
-builder.Services.ConfigureHttpCacheHeaders();
+
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -37,6 +37,12 @@ builder.Services.AddScoped<IDataShaper<ProductDto>, DataShaper<ProductDto>>();
 builder.Services.AddScoped<IProductLinks, ProductLinks>();
 
 builder.Services.ConfigureVersioning();
+builder.Services.ConfigureResponseCaching();
+builder.Services.ConfigureHttpCacheHeaders();
+
+builder.Services.AddMemoryCache();
+builder.Services.ConfigureRateLimitingOptions();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers(config => {
 	config.RespectBrowserAcceptHeader = true;
@@ -48,6 +54,7 @@ builder.Services.AddControllers(config => {
   .AddApplicationPart(typeof(ProductsApp.Presentation.AssemblyReference).Assembly);
 
 builder.Services.AddCustomMediaTypes();
+
 
 var app = builder.Build();
 
@@ -64,6 +71,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 	ForwardedHeaders = ForwardedHeaders.All
 });
 
+app.UseIpRateLimiting();
 app.UseCors("CorsPolicy");
 app.UseResponseCaching();
 app.UseHttpCacheHeaders();
