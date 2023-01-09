@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using NLog;
 using Shared.DataTransferObjects;
 using Service.DataShaping;
+using ProductsApp.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,10 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 builder.Services.AddScoped<ValidationFilterAttribute>();
+builder.Services.AddScoped<ValidateMediaTypeAttribute>();
+
 builder.Services.AddScoped<IDataShaper<ProductDto>, DataShaper<ProductDto>>();
+builder.Services.AddScoped<IProductLinks, ProductLinks>();
 
 
 builder.Services.AddControllers(config => {
@@ -37,6 +41,8 @@ builder.Services.AddControllers(config => {
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCSVFormatter()
   .AddApplicationPart(typeof(ProductsApp.Presentation.AssemblyReference).Assembly);
+
+builder.Services.AddCustomMediaTypes();
 
 var app = builder.Build();
 

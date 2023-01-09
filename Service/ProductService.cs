@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.Exceptions;
+using Entities.LinkModels;
 using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using System.ComponentModel.Design;
 using System.Dynamic;
 
 namespace Service;
@@ -14,30 +16,36 @@ internal sealed class ProductService : IProductService
 	private readonly IRepositoryManager _repository;
 	private readonly ILoggerManager _logger;
 	private readonly IMapper _mapper;
-    private readonly IDataShaper<ProductDto> _dataShaper;
+    private readonly IProductLinks _productLinks;
 
-    public ProductService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<ProductDto> dataShaper)
+    public ProductService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IProductLinks productLinks)
 	{
 		_repository = repository;
 		_logger = logger;
 		_mapper = mapper;
-        _dataShaper = dataShaper;
+        _productLinks = productLinks;
     }
 
-	public async Task<(IEnumerable<Entity> products, MetaData metaData)> GetAllProductsAsync(ProductParameters productParameters, bool trackChanges)
+	public async Task<(LinkResponse linkResponse, MetaData metaData)> GetAllProductsAsync(LinkParameters linkParameters
+		, bool trackChanges)
 	{
-		if (!productParameters.ValidPriceRange)
+		if (!linkParameters.ProductParameters.ValidPriceRange)
 		{
 			throw new MaxPriceRangeBadRequestException();
 		}
 
-		var productsWithMetaData = await _repository.Product.GetAllProductsAsync(productParameters, trackChanges);
+		if (!linkParameters.ProductParameters.ValidPriceRange)
+		{
+			throw new MaxPriceRangeBadRequestException();
+		}
+
+		var productsWithMetaData = await _repository.Product.GetAllProductsAsync(linkParameters.ProductParameters,  trackChanges);
 
 		var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetaData);
 
-		var shapedData = _dataShaper.ShapeData(productsDto, productParameters.Fields);
+        var links = _productLinks.TryGenerateLinks(productsDto, linkParameters.ProductParameters.Fields, linkParameters.Context);
 
-		return (products: shapedData, metaData: productsWithMetaData.MetaData);
+        return (LinkResponse: links, metaData: productsWithMetaData.MetaData);
 	}
 
 	public async Task<ProductDto> GetProductAsync(Guid id, bool trackChanges)

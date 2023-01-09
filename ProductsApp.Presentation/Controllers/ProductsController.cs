@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Entities.LinkModels;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ProductsApp.Presentation.ActionFilters;
 using ProductsApp.Presentation.ModelBinders;
@@ -18,13 +19,15 @@ public class ProductsController : ControllerBase
     public ProductsController(IServiceManager service) => _service = service;
 
     [HttpGet]
+    [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
     {
-        var pagedResult = await _service.ProductService.GetAllProductsAsync(productParameters, false);
+        var linkParams = new LinkParameters(productParameters, HttpContext);
+        var result = await _service.ProductService.GetAllProductsAsync(linkParams, false);
 
-        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData));
 
-        return Ok(pagedResult.products);
+        return result.linkResponse.HasLinks ? Ok(result.linkResponse.LinkedEntities) : Ok(result.linkResponse.ShapedEntities);
     }
 
     [HttpGet("{id:guid}", Name = "ProductById")]
