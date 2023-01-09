@@ -5,6 +5,7 @@ using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using System.Dynamic;
 
 namespace Service;
 
@@ -13,15 +14,17 @@ internal sealed class ProductService : IProductService
 	private readonly IRepositoryManager _repository;
 	private readonly ILoggerManager _logger;
 	private readonly IMapper _mapper;
+    private readonly IDataShaper<ProductDto> _dataShaper;
 
-	public ProductService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public ProductService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<ProductDto> dataShaper)
 	{
 		_repository = repository;
 		_logger = logger;
 		_mapper = mapper;
-	}
+        _dataShaper = dataShaper;
+    }
 
-	public async Task<(IEnumerable<ProductDto> products, MetaData metaData)> GetAllProductsAsync(ProductParameters productParameters, bool trackChanges)
+	public async Task<(IEnumerable<Entity> products, MetaData metaData)> GetAllProductsAsync(ProductParameters productParameters, bool trackChanges)
 	{
 		if (!productParameters.ValidPriceRange)
 		{
@@ -32,7 +35,9 @@ internal sealed class ProductService : IProductService
 
 		var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetaData);
 
-		return (products: productsDto, metaData: productsWithMetaData.MetaData);
+		var shapedData = _dataShaper.ShapeData(productsDto, productParameters.Fields);
+
+		return (products: shapedData, metaData: productsWithMetaData.MetaData);
 	}
 
 	public async Task<ProductDto> GetProductAsync(Guid id, bool trackChanges)

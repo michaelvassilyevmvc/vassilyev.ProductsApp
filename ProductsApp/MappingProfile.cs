@@ -9,6 +9,7 @@ public class MappingProfile : Profile
 	public MappingProfile()
 	{
 		CreateMap<Product, ProductDto>()
+			.ForMember(c=>c.ProductCompanyName, opt => opt.MapFrom(x => x.CompanyName))
 			.ForMember(c => c.ExpireDayCount,
 				opt => opt.MapFrom(x => x.ExpiresDate.HasValue ? (x.ExpiresDate.Value - x.ProductionDate).TotalDays : 0));
 
