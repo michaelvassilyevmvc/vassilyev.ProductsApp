@@ -18,10 +18,19 @@ public class ProductsController : ControllerBase
 
     public ProductsController(IServiceManager service) => _service = service;
 
+    [HttpOptions]
+    public IActionResult GetProductOptions()
+    {
+        Response.Headers.Add("Allow", "GET, OPTIONS, POST");
+        return Ok();
+    }
+
     [HttpGet]
+    [HttpHead]
     [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
     {
+
         var linkParams = new LinkParameters(productParameters, HttpContext);
         var result = await _service.ProductService.GetAllProductsAsync(linkParams, false);
 
