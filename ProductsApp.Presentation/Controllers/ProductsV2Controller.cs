@@ -6,6 +6,7 @@ namespace ProductsApp.Presentation.Controllers
 {
     [Route("api/products")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class ProductsV2Controller : ControllerBase
     {
         private readonly IRepositoryManager _repo;
