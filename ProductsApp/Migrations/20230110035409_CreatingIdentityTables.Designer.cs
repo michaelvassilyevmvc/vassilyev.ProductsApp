@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
@@ -11,9 +12,10 @@ using Repository;
 namespace ProductsApp.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20230110035409_CreatingIdentityTables")]
+    partial class CreatingIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,19 +57,19 @@ namespace ProductsApp.Migrations
                         {
                             Id = new Guid("a2b62ec8-00ff-437b-b6ef-39b68cfb2ed3"),
                             CompanyName = "Балтика",
-                            ExpiresDate = new DateTime(2023, 1, 13, 4, 1, 50, 659, DateTimeKind.Utc).AddTicks(8824),
+                            ExpiresDate = new DateTime(2023, 1, 13, 3, 54, 9, 55, DateTimeKind.Utc).AddTicks(1996),
                             Name = "FLASH energy",
                             Price = 0m,
-                            ProductionDate = new DateTime(2023, 1, 10, 4, 1, 50, 659, DateTimeKind.Utc).AddTicks(8823)
+                            ProductionDate = new DateTime(2023, 1, 10, 3, 54, 9, 55, DateTimeKind.Utc).AddTicks(1994)
                         },
                         new
                         {
                             Id = new Guid("c9d4c053-49b6-410c-bc78-2d54a9991870"),
                             CompanyName = "Gorrila",
-                            ExpiresDate = new DateTime(2023, 1, 20, 4, 1, 50, 659, DateTimeKind.Utc).AddTicks(8834),
+                            ExpiresDate = new DateTime(2023, 1, 20, 3, 54, 9, 55, DateTimeKind.Utc).AddTicks(2005),
                             Name = "Gorilla Energy",
                             Price = 0m,
-                            ProductionDate = new DateTime(2022, 12, 28, 4, 1, 50, 659, DateTimeKind.Utc).AddTicks(8834)
+                            ProductionDate = new DateTime(2022, 12, 28, 3, 54, 9, 55, DateTimeKind.Utc).AddTicks(2005)
                         },
                         new
                         {
@@ -75,7 +77,7 @@ namespace ProductsApp.Migrations
                             CompanyName = "Red Bull",
                             Name = "Monster",
                             Price = 0m,
-                            ProductionDate = new DateTime(2023, 1, 20, 4, 1, 50, 659, DateTimeKind.Utc).AddTicks(8837)
+                            ProductionDate = new DateTime(2023, 1, 20, 3, 54, 9, 55, DateTimeKind.Utc).AddTicks(2007)
                         });
                 });
 
@@ -177,22 +179,6 @@ namespace ProductsApp.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "818f4286-323e-466c-8ef9-3e1a6d12547d",
-                            ConcurrencyStamp = "af87f75b-5a3d-4940-8ccb-09564611306d",
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
-                        },
-                        new
-                        {
-                            Id = "0f67e2c6-fa2f-439d-acd2-bd384d7e5e94",
-                            ConcurrencyStamp = "63649181-edcd-4348-8f03-2c578e243db7",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
