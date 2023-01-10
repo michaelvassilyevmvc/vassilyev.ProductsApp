@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entities.ConfigurationModels;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Service.Contracts;
 
 namespace Service;
@@ -13,12 +14,12 @@ public sealed class ServiceManager : IServiceManager
     private readonly Lazy<IAuthenticationService> _authenticationService;
 
     public ServiceManager(
-        IRepositoryManager repositoryManager, 
-        ILoggerManager logger, 
-        IMapper mapper, 
+        IRepositoryManager repositoryManager,
+        ILoggerManager logger,
+        IMapper mapper,
         IProductLinks productLinks,
         UserManager<User> userManager,
-        IConfiguration configuration)
+        IOptions<JwtConfiguration> configuration)
     {
         _productService = new Lazy<IProductService>(() =>
             new ProductService(repositoryManager, logger, mapper, productLinks));
